@@ -1,6 +1,6 @@
 <template>
   <div class="star-wars-home">
-    <h1 class="swh__title">Universe Star Wars</h1>
+    <h1 class="swh__title">Star Wars Universe</h1>
     <div class="swh__header">
       <input v-model="searchTerm" @keypress.enter="search" type="text" class="swh__search" placeholder="Search for a character">
       <button @click="search" type="text" class="swh__button">Search</button>
@@ -17,6 +17,7 @@
 </template>
 
 <script>
+// Libs
 import Pagination from 'vue-pagination-2';
 
 import { getCharacters, searchCharacter } from '@/services'
@@ -50,7 +51,6 @@ export default {
 
           this.count = res?.data?.count;
           this.list = res?.data?.results;
-
         })
         .catch(() => {
           this.hasError = true;
@@ -93,17 +93,17 @@ export default {
 
       if(url.charAt(urlLength - 5) === '/') {
         personId = url.charAt(urlLength - 4) + url.charAt(urlLength - 3) + url.charAt(urlLength - 2);
-        this.$router.push({ name: 'person-info', params: { id: personId } });
+        this.$router.push({ name: 'character-info', params: { id: personId } });
       }
 
       else if (url.charAt(urlLength - 3) === '/') {
         personId = url.charAt(urlLength - 2);
-        this.$router.push({ name: 'person-info', params: { id: personId } });
+        this.$router.push({ name: 'character-info', params: { id: personId } });
       } 
       
       else {
         personId = url.charAt(urlLength - 3) + url.charAt(urlLength - 2);
-        this.$router.push({ name: 'person-info', params: { id: personId } });
+        this.$router.push({ name: 'character-info', params: { id: personId } });
       }
     },
 

@@ -10,6 +10,14 @@ export const getCharacters = (page = '1') => {
     })
 }
 
+
+export const getCharacterById = (id) => {
+    return axios({
+        method: 'GET',
+        url: `https://swapi.dev/api/people/${id}`,
+    })
+}
+
 export const searchCharacter = (searchTerm, page) => {
     return axios({
         method: 'GET',

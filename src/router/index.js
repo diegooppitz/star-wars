@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
-import PersonInfo from '../views/PersonInfo.vue'
+import CharacterInfo from '../views/CharacterInfo.vue'
 
 Vue.use(VueRouter)
 
@@ -12,9 +12,9 @@ const routes = [
     component: Home
   },
   {
-    name: 'person-info',
-    path: '/person/:id',
-    component: PersonInfo,
+    name: 'character-info',
+    path: '/character/:id',
+    component: CharacterInfo,
     props: true,
   },
 ]
