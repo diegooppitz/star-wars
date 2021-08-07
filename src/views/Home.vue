@@ -1,6 +1,10 @@
 <template>
   <div class="star-wars-home">
-    <h1 class="swh__title">Select a people</h1>
+    <h1 class="swh__title">Universe Star Wars</h1>
+    <div class="swh__header">
+      <input v-model="searchTerm" @keypress.enter="search" type="text" class="swh__search" placeholder="Search for a character">
+      <button @click="search" type="text" class="swh__button">Search</button>
+    </div>
 
     <ul class="swh__list">
       <li class="swh__list-person" v-for="(person, index) in list" :key="index" >
@@ -8,20 +12,22 @@
       </li>
     </ul>
 
-    <pagination v-model="page" :records="count" :per-page="10" @paginate="callback"/>
+    <pagination v-model="page" :records="count" :per-page="10" @paginate="paginationCallback"/>
   </div>
 </template>
 
 <script>
 import Pagination from 'vue-pagination-2';
 
-import { getPerson } from '@/services'
+import { getCharacters, searchCharacter } from '@/services'
 
 export default {
   name: 'Home',
   data() {
     return {
       list: [],
+      searchTerm: '',
+      searchIsActive: false,
       page: 1,
       count: 0,
       hasError: false,
@@ -38,28 +44,53 @@ export default {
     fetchData() {
       this.loading = true;
 
-      getPerson(this.page)
+      getCharacters(this.page)
         .then((res) => {
+          if(!res.data || !res?.data?.results) return;
+
           this.count = res?.data?.count;
           this.list = res?.data?.results;
 
-          if(!this.list) this.hasError = true;
         })
         .catch(() => {
           this.hasError = true;
         })
         .finally(() => {
           this.loading = false;
-        })
+        });
     },
 
+    search() {
+      if(!this.searchTerm || this.searchTerm.length === 0) {
+        this.searchIsActive = false;
+        this.fetchData();
+        return;
+      }
+
+      this.searchIsActive = true;
+
+      searchCharacter(this.searchTerm, this.page)
+        .then((res) => {
+            this.count = res?.data?.count;
+            this.list = res?.data?.results;
+
+            if(!this.list) this.hasError = true;
+        })
+        .catch(() => {
+          this.hasError = true;
+        })
+        .finally(() => {
+          this.loading = false;
+        });
+    },
+
+    // Pick the id on url of a specific people
     pickPersonId(url) {
       const urlLength = url?.length;
       if (!urlLength) return;
 
       let personId;
 
-      // Pick the id on url of the people
       if(url.charAt(urlLength - 5) === '/') {
         personId = url.charAt(urlLength - 4) + url.charAt(urlLength - 3) + url.charAt(urlLength - 2);
         this.$router.push({ name: 'person-info', params: { id: personId } });
@@ -76,9 +107,11 @@ export default {
       }
     },
 
-    callback(page) {
+    paginationCallback(page) {
       this.page = page;
-      this.fetchData();
+      if(this.searchIsActive) this.search();
+      else this.fetchData();
+      
     }
   }
 }
@@ -86,42 +119,67 @@ export default {
 
 
 <style lang="stylus" scoped>
-  .star-wars-home
-    height 100vh
-    align-content center
-    justify-content center
-    display flex
-    flex-direction column 
+.star-wars-home
+  height 100vh
+  box-sizing border-box
+  align-content center
+  justify-content center
+  display flex
+  flex-direction column 
 
-    @media screen and (max-width: 768px)
-      height 100%
-      
+  @media screen and (max-width: 767px)
+    height 100%
+    
 
-  .swh
-    &__title
-      color: #000
-      margin: 20px 0 10px 0
-      padding: 0
+.swh
+  &__title
+    color: #000
+    margin: 20px 0 10px 0
+    padding: 0
 
-    &__list
-      list-style: none
-      margin: 2% 0 5% 0
-      padding: 0
 
-      &-person
-        padding: 15px 0
+  &__search,
+  &__button 
+    box-sizing border-box
+    height 40px
+    font-size 18px
 
-        @media screen and (max-width: 768px)
-          padding: 10px 0
+  &__search
+    padding 5px 20px
+    margin-top 30px
+    width 250px
+    outline none
+    border 1px solid #ccc
 
-      &-person a
-        font-size 24px
-        color: #4169E1
-        cursor: pointer
-        padding: 0 5px
+  &__button
+    background-color #4169e1
+    color: #fff
+    width 150px
+    border none
+    cursor pointer
 
-        @media screen and (max-width: 768px)
-          font-size: 20px
+    &:hover 
+      opacity 0.9
+
+  &__list
+    list-style: none
+    margin: 20px 0 80px 0
+    padding: 0
+
+    &-person
+      padding: 15px 0
+
+      @media screen and (max-width: 767px)
+        padding: 10px 0
+
+    &-person a
+      font-size 24px
+      color: #4169E1
+      cursor: pointer
+      padding: 0 5px
+
+      @media screen and (max-width: 767px)
+        font-size: 20px
 </style>
 
 <style lang="stylus">

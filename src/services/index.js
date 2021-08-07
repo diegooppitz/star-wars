@@ -1,8 +1,22 @@
 import axios from 'axios';
 
-export const getPerson = (page = '1') => {
+export const getCharacters = (page = '1') => {
     return axios({
         method: 'GET',
-        url: `https://swapi.dev/api/people/?page=${page}`
+        url: `https://swapi.dev/api/people/`,
+        params: {
+            page,
+        }
+    })
+}
+
+export const searchCharacter = (searchTerm, page) => {
+    return axios({
+        method: 'GET',
+        url: `https://swapi.dev/api/people/`,
+        params: {
+            search: searchTerm,
+            page,
+        }
     })
 }
