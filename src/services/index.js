@@ -28,3 +28,10 @@ export const searchCharacter = (searchTerm, page) => {
         }
     })
 }
+
+export const getPlanetByUrl = (url) => {
+    return axios({
+        method: 'GET',
+        url: `${url}`,
+    })
+}
