@@ -1,17 +1,19 @@
 <template>
-  <div class="star-wars-home">
-    <h1 class="swh__title">Star Wars characters</h1>
-    <div class="swh__header">
-      <input v-model="searchTerm" @keypress.enter="search" @keydown="searchPressKey" type="text" class="swh__search" placeholder="Search for a character">
-    </div>
+  <div class="star-wars-home" :class="{ loadHeight: $_verifyLoaded('loading') }">
+    <template v-if="$_verifyLoaded('done')">
+      <h1 class="swh__title">Star Wars characters</h1>
+      <div class="swh__header">
+        <input v-model="searchTerm" @keypress.enter="search" @keydown="searchPressKey" type="text" class="swh__search" placeholder="Search for a character">
+      </div>
 
-    <ul class="swh__list">
-      <li class="swh__list-person" v-for="(person, index) in list" :key="index" >
-        <a @click="pickPersonId(person.url)">{{ person.name }}</a>
-      </li>
-    </ul>
-
-    <pagination v-model="page" :records="count" :per-page="10" @paginate="paginationCallback"/>
+      <ul class="swh__list">
+        <li class="swh__list-person" v-for="(person, index) in list" :key="index" >
+          <a @click="pickPersonId(person.url)">{{ person.name }}</a>
+        </li>
+      </ul>
+      <pagination v-model="page" :records="count" :per-page="10" @paginate="paginationCallback"/>
+    </template>
+    <loading-component v-if="$_verifyLoaded('loading')" />
   </div>
 </template>
 
@@ -19,10 +21,18 @@
 // Libs
 import Pagination from 'vue-pagination-2';
 
+// services
 import { getCharacters, searchCharacter } from '@/services'
+
+// mixins
+import { verifyMixin } from '@/mixins'
+
+
+import LoadingComponent from '@/components/Loading'
 
 export default {
   name: 'Home',
+  mixins: [verifyMixin],
   data() {
     return {
       list: [],
@@ -30,19 +40,18 @@ export default {
       searchIsActive: false,
       page: 1,
       count: 0,
-      hasError: false,
-      loading: false,
     }
   },
   components: {
     Pagination,
+    LoadingComponent,
   },
   mounted() {
     this.fetchData();
   },
   methods: {
     fetchData() {
-      this.loading = true;
+      this.$_reqConfig();
 
       getCharacters(this.page)
         .then((res) => {
@@ -60,6 +69,8 @@ export default {
     },
 
     searchPressKey() {
+      this.page = 1;
+
       setTimeout(() => {
         if(!this.searchTerm || this.searchTerm.length === 0 ) {
           this.fetchData();
@@ -71,7 +82,9 @@ export default {
     },
 
     search() {
-      if(!this.searchTerm || this.searchTerm.length === 0) {
+      if (!this.searchIsActive) this.page = 1;
+
+      if (!this.searchTerm || this.searchTerm.length === 0) {
         this.searchIsActive = false;
         this.fetchData();
         return;
@@ -121,7 +134,6 @@ export default {
       this.page = page;
       if(this.searchIsActive) this.search();
       else this.fetchData();
-      
     }
   }
 }
@@ -142,87 +154,94 @@ export default {
     height 100%
     
 
-.swh
-  &__title
-    color: #FFD700
-    margin: 20px 0 10px 0
-    padding: 0
+  .swh
+    &__title
+      color #FFD700
+      margin 20px 0 10px 0
+      padding 0
 
 
-  &__search,
-  &__button 
-    box-sizing border-box
-    height 40px
-    font-size 18px
+    &__search,
+    &__button 
+      box-sizing border-box
+      height 40px
+      font-size 18px
 
-  &__search
-    padding 5px 20px
-    margin-top 30px
-    width 300px
-    outline none
-    border 1px solid #ccc
-    border-radius 20px
+    &__search
+      padding 5px 20px
+      margin-top 30px
+      width 300px
+      outline none
+      border 1px solid #ccc
+      border-radius 20px
 
-  &__button
-    background-color #4169e1
-    color: #fff
-    width 150px
-    border none
-    cursor pointer
+    &__button
+      background-color #4169e1
+      color #fff
+      width 150px
+      border none
+      cursor pointer
 
-    &:hover 
-      opacity 0.9
+      &:hover 
+        opacity 0.9
 
-  &__list
-    list-style: none
-    margin: 20px 0 80px 0
-    padding: 0
+    &__list
+      list-style none
+      margin 20px 0 80px 0
+      padding 0
 
-    &-person
-      padding: 15px 0
+      &-person
+        padding 15px 0
 
-      @media screen and (max-width: 767px)
-        padding: 10px 0
+        @media screen and (max-width: 767px)
+          padding 10px 0
 
-    &-person a
-      font-size 24px
-      color: #fff
-      cursor: pointer
-      padding: 0 5px
+      &-person a
+        font-size 24px
+        color #fff
+        cursor pointer
+        padding 0 5px
 
-      @media screen and (max-width: 767px)
-        font-size: 20px
+        @media screen and (max-width: 767px)
+          font-size 20px
+
+  &.loadHeight 
+    height 100vh
+    overflow hidden
 </style>
 
 <style lang="stylus">
 .pagination
-    display: flex
-    justify-content: center
-    list-style: none
-    padding: 0
-    margin: 0
+    display flex
+    justify-content center
+    list-style none
+    padding 0
+    margin 0
 
     .page-item 
-      padding: 0.5rem 0.75rem;
-      cursor: pointer;
-      color: #fff
+      padding 0.5rem 0.75rem;
+      cursor pointer
+      color #fff
+
+      @media screen and (max-width: 767px)
+        padding 6px 10px
 
       &:hover 
-        background-color: #BD6A16
+        background-color #BD6A16
         font-weight 600
-        z-index: 3
+        z-index 3
       
 
       &.active
-        background-color: #BD6A16
-        color: #fff
+        background-color #BD6A16
+        color #fff
         font-weight 600
       
 
       &:first-child,
       &:last-child
-        display: none
+        display none
 
       .VuePagination__count 
-        color: #000
+        color #000
 </style>
