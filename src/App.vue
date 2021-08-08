@@ -10,6 +10,12 @@
    font-style normal
    src url(https://fonts.googleapis.com/css?family=News+Cycle)
 
+body,
+html,
+#app 
+  margin 0
+  padding 0
+
 #app
   font-family News Cycle
   -webkit-font-smoothing antialiased

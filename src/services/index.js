@@ -35,3 +35,24 @@ export const getPlanetByUrl = (url) => {
         url: `${url}`,
     })
 }
+
+export const getFilmsByUrls = (url) => {
+    return axios({
+        method: 'GET',
+        url: `${url}`,
+    })
+}
+
+export const getStarshipsByUrls = (url) => {
+    return axios({
+        method: 'GET',
+        url: `${url}`,
+    })
+}
+
+export const getVehiclesByUrls = (url) => {
+    return axios({
+        method: 'GET',
+        url: `${url}`,
+    })
+}
