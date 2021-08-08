@@ -32,7 +32,7 @@
                 </div>
 
                 <div class="ci__data-col">
-                    <h4 class="ci__item ci__item-title">vehicles</h4>
+                    <h4 class="ci__item ci__item-title">Vehicles</h4>
                     <p v-if="vehicles.length === 0" class="ci__item">No vehicles</p>
                     <template v-else>
                         <p v-for="(vehicle, index) in vehicles" :key="index" class="ci__item">
@@ -128,7 +128,6 @@ export default {
         }, 
 
         fetchStarships(urls) {
-            console.log(urls)
             if(!urls) return;
 
             for (let index in urls) {
@@ -146,7 +145,6 @@ export default {
         },
 
         fetchVehicles(urls) {
-            console.log(urls)
             if(!urls) return;
 
             for (let index in urls) {

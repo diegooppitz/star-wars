@@ -1,9 +1,8 @@
 <template>
   <div class="star-wars-home">
-    <h1 class="swh__title">Star Wars Universe</h1>
+    <h1 class="swh__title">Star Wars characters</h1>
     <div class="swh__header">
-      <input v-model="searchTerm" @keypress.enter="search" type="text" class="swh__search" placeholder="Search for a character">
-      <button @click="search" type="text" class="swh__button">Search</button>
+      <input v-model="searchTerm" @keypress.enter="search" @keydown="searchPressKey" type="text" class="swh__search" placeholder="Search for a character">
     </div>
 
     <ul class="swh__list">
@@ -58,6 +57,17 @@ export default {
         .finally(() => {
           this.loading = false;
         });
+    },
+
+    searchPressKey() {
+      setTimeout(() => {
+        if(!this.searchTerm || this.searchTerm.length === 0 ) {
+          this.fetchData();
+          return
+        }
+
+        this.search();
+      }, 1000);
     },
 
     search() {
@@ -125,7 +135,8 @@ export default {
   align-content center
   justify-content center
   display flex
-  flex-direction column 
+  flex-direction column
+  background-color #000
 
   @media screen and (max-width: 767px)
     height 100%
@@ -133,7 +144,7 @@ export default {
 
 .swh
   &__title
-    color: #000
+    color: #FFD700
     margin: 20px 0 10px 0
     padding: 0
 
@@ -147,9 +158,10 @@ export default {
   &__search
     padding 5px 20px
     margin-top 30px
-    width 250px
+    width 300px
     outline none
     border 1px solid #ccc
+    border-radius 20px
 
   &__button
     background-color #4169e1
@@ -174,7 +186,7 @@ export default {
 
     &-person a
       font-size 24px
-      color: #4169E1
+      color: #fff
       cursor: pointer
       padding: 0 5px
 
@@ -192,20 +204,17 @@ export default {
 
     .page-item 
       padding: 0.5rem 0.75rem;
-      border: 1px solid #ccc;
       cursor: pointer;
-      background-color: #fff;
+      color: #fff
 
       &:hover 
-        background-color: #4169e1
-        color: #fff
+        background-color: #BD6A16
         font-weight 600
-        border-color: lighten(#ccc, 50%)
         z-index: 3
       
 
       &.active
-        background-color: #4169e1
+        background-color: #BD6A16
         color: #fff
         font-weight 600
       
@@ -213,4 +222,7 @@ export default {
       &:first-child,
       &:last-child
         display: none
+
+      .VuePagination__count 
+        color: #000
 </style>
