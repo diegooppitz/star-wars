@@ -43,6 +43,7 @@
                     </div>
                 </div>
             </div>
+            <router-link class="ci__back" :to="{ name: 'home'}">Back</router-link>
         </template>
         <loading-component v-if="$_verifyLoaded('loading')" />
     </div>
@@ -172,15 +173,16 @@ export default {
     overflow hidden
     background-color #000
     
-    @media screen and (max-width: 767px)
+    @media screen and (max-width: 768px)
         overflow-y scroll
         height auto
+        min-height 100vh
         padding-bottom 20px
 
     .ci
         &__title 
             color #FFD700
-            font-size 40px
+            font-size 32px
 
 
         &__wrapper 
@@ -193,15 +195,14 @@ export default {
             border solid 2px #fff
             border-radius 10px
 
-            @media screen and (max-width: 767px)
+            @media screen and (max-width: 768px)
                 height auto
-                position relative
         
         &__data
             display flex
             justify-content center
 
-            @media screen and (max-width: 767px)
+            @media screen and (max-width: 768px)
                 flex-direction column
 
         &__data-col
@@ -213,6 +214,11 @@ export default {
             &-title
                 font-size 26px
                 margin 20px 0
+
+        &__back 
+            color #fff
+            font-size 18px
+            margin-top 30px
 
     &.loadHeight 
         height 100vh
