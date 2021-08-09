@@ -142,7 +142,8 @@ export default {
 
 <style lang="stylus" scoped>
 .star-wars-home
-  height 100vh
+  height auto
+  min-height 100vh
   box-sizing border-box
   align-content center
   justify-content center
