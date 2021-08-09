@@ -1,6 +1,6 @@
 # star-wars-universe
 
-## [Try it](https://star-wars-universe.netlify.app/)
+## [Access the app](https://star-wars-universe.netlify.app/)
 ## Project setup
 ```
 npm install
