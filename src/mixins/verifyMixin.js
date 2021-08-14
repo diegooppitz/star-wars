@@ -5,7 +5,7 @@ const mixin = {
     return {
       isEmpty: false,
       hasError: false,
-      loading: true,
+      loading: false,
     };
   },
   methods: {
@@ -25,6 +25,7 @@ const mixin = {
           return false;
       }
     },
+
     $_verifyLoadedVuex(verify) {
       switch (verify) {
         case 'done':
@@ -38,6 +39,7 @@ const mixin = {
           return false;
       }
     },
+
     /**
      * @description First pattern test, checks if the card has data
      */
@@ -49,9 +51,7 @@ const mixin = {
       }
       return this.isEmpty;
     },
-    /**
-     * @description Second pattern test, checks if the card has data
-     */
+
     $_reqConfig() {
       this.loading = true;
       this.hasError = false;

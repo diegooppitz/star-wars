@@ -1,28 +1,26 @@
 <template>
-  <div class="star-wars-home" :class="{ loadHeight: $_verifyLoaded('loading') }">
-    <template v-if="$_verifyLoaded('done')">
+  <div class="star-wars-home" :class="{ loadHeight: $_verifyLoadedVuex('loading') }">
+    <template v-if="$_verifyLoadedVuex('done')">
       <h1 class="swh__title">Star Wars characters</h1>
       <div class="swh__header">
         <input v-model="searchTerm" @keypress.enter="search" @keydown="searchPressKey" type="text" class="swh__search" placeholder="Search for a character">
       </div>
 
       <ul class="swh__list">
-        <li class="swh__list-person" v-for="(person, index) in list" :key="index" >
+        <li class="swh__list-person" v-for="(person, index) in getCharactersList" :key="index" >
           <a @click="pickPersonId(person.url)">{{ person.name }}</a>
         </li>
       </ul>
-      <pagination v-model="page" :records="count" :per-page="10" @paginate="paginationCallback"/>
+      <pagination v-model="page" :records="getCount" :per-page="10" @paginate="paginationCallback"/>
     </template>
-    <loading-component v-if="$_verifyLoaded('loading')" />
+    <loading-component v-if="$_verifyLoadedVuex('loading')" />
   </div>
 </template>
 
 <script>
 // Libs
 import Pagination from 'vue-pagination-2';
-
-// services
-import { getCharacters, searchCharacter } from '@/services'
+import { mapActions, mapGetters } from 'vuex'
 
 // mixins
 import { verifyMixin } from '@/mixins'
@@ -35,54 +33,52 @@ export default {
   mixins: [verifyMixin],
   data() {
     return {
-      list: [],
       searchTerm: '',
       searchIsActive: false,
       page: 1,
-      count: 0,
     }
   },
   components: {
     Pagination,
     LoadingComponent,
   },
+
+  watch: {
+    getPage() {
+      this.page = this.getPage;
+    }
+  },
+
   mounted() {
     this.fetchData();
   },
+
+  computed: {
+    ...mapGetters(['getCharactersList', 'getCount', 'getPage', 'getLoading', 'getHasError', 'getIsEmpty']),
+  },
+
   methods: {
+    ...mapActions(['setCharacters', 'setPage', 'setSearch']),
     fetchData() {
-      this.$_reqConfig();
-
-      getCharacters(this.page)
-        .then((res) => {
-          if(!res.data || !res?.data?.results) return;
-
-          this.count = res?.data?.count;
-          this.list = res?.data?.results;
-        })
-        .catch(() => {
-          this.hasError = true;
-        })
-        .finally(() => {
-          this.loading = false;
-        });
+      this.setCharacters();
     },
 
-    searchPressKey() {
-      this.page = 1;
-
+    searchPressKey() { 
       setTimeout(() => {
         if(!this.searchTerm || this.searchTerm.length === 0 ) {
+          this.setPage(1);
           this.fetchData();
           return
         }
 
+
+        this.setPage(1);
         this.search();
       }, 1000);
     },
 
     search() {
-      if (!this.searchIsActive) this.page = 1;
+      if (!this.searchIsActive) this.setPage(1);
 
       if (!this.searchTerm || this.searchTerm.length === 0) {
         this.searchIsActive = false;
@@ -91,20 +87,7 @@ export default {
       }
 
       this.searchIsActive = true;
-
-      searchCharacter(this.searchTerm, this.page)
-        .then((res) => {
-            this.count = res?.data?.count;
-            this.list = res?.data?.results;
-
-            if(!this.list) this.hasError = true;
-        })
-        .catch(() => {
-          this.hasError = true;
-        })
-        .finally(() => {
-          this.loading = false;
-        });
+      this.setSearch(this.searchTerm);
     },
 
     // Pick the id on url of a specific people
@@ -131,7 +114,7 @@ export default {
     },
 
     paginationCallback(page) {
-      this.page = page;
+      this.setPage(page);
       if(this.searchIsActive) this.search();
       else this.fetchData();
     }
