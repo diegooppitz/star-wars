@@ -69,14 +69,14 @@ export default {
     },
 
     searchPressKey() {
-      this.page = 1;
-
       setTimeout(() => {
         if(!this.searchTerm || this.searchTerm.length === 0 ) {
+          this.page = 1;
           this.fetchData();
           return
         }
 
+        this.page = 1;
         this.search();
       }, 1000);
     },
