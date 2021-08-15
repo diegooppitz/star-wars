@@ -102,7 +102,6 @@ export default {
       }
 
       this.searchIsActive = true;
-      // this.$_reqConfig();
 
       searchCharacter(this.searchTerm, this.page)
         .then((res) => {
@@ -110,12 +109,6 @@ export default {
 
             this.count = res?.data?.count;
             this.list = res?.data?.results;
-        })
-        .catch(() => {
-          this.hasError = true;
-        })
-        .finally(() => {
-          this.loading = false;
         });
     },
 
