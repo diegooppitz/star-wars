@@ -15,7 +15,7 @@ const mixin = {
     $_verifyLoaded(verify) {
       switch (verify) {
         case 'done':
-          return !this.hasError && !this.loading && !this.isEmpty;
+          return !this.hasError && !this.loading;
         case 'loading':
           return this.loading;
         case 'info':
@@ -29,7 +29,7 @@ const mixin = {
     $_verifyLoadedVuex(verify) {
       switch (verify) {
         case 'done':
-          return !this.getIsEmpty && !this.getHasError && !this.getLoading;
+          return !this.getHasError && !this.getLoading;
         case 'loading':
           return this.getLoading;
         case 'info':

@@ -6,12 +6,16 @@
         <input v-model="searchTerm" @keypress.enter="search" @keydown="searchPressKey" type="text" class="swh__search" placeholder="Search for a character">
       </div>
 
-      <ul class="swh__list">
-        <li class="swh__list-person" v-for="(person, index) in getCharactersList" :key="index" >
-          <a @click="pickPersonId(person.url)">{{ person.name }}</a>
-        </li>
-      </ul>
-      <pagination v-model="page" :records="getCount" :per-page="10" @paginate="paginationCallback"/>
+      <template v-if="!getIsEmpty">
+        <ul class="swh__list">
+          <li class="swh__list-person" v-for="(person, index) in getCharactersList" :key="index" >
+            <a @click="pickPersonId(person.url)">{{ person.name }}</a>
+          </li>
+        </ul>
+        <pagination v-model="page" :records="getCount" :per-page="10" @paginate="paginationCallback"/>
+      </template>
+      <information-component v-else />
+
     </template>
     <loading-component v-if="$_verifyLoadedVuex('loading')" />
   </div>
@@ -25,8 +29,9 @@ import { mapActions, mapGetters } from 'vuex'
 // mixins
 import { verifyMixin } from '@/mixins'
 
-
+// components
 import LoadingComponent from '@/components/Loading'
+import InformationComponent from '@/components/Information';
 
 export default {
   name: 'Home',
@@ -41,12 +46,13 @@ export default {
   components: {
     Pagination,
     LoadingComponent,
+    InformationComponent,
   },
 
   watch: {
     getPage() {
       this.page = this.getPage;
-    }
+    },
   },
 
   mounted() {

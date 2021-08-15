@@ -31,6 +31,10 @@ export default new Vuex.Store({
 
     SET_LOADING(state, value) {
       state.loading = value;
+    },
+
+    SET_IS_EMPTY(state, value) {
+      state.isEmpty = value;
     }
   },
 
@@ -41,8 +45,12 @@ export default new Vuex.Store({
       getCharacters(state.page)
         .then((res) => {
           const data = res?.data;
-          if (!data || !data.results || !data.count) return
+          if (!data || !data.results || data.results.length === 0) {
+            commit('SET_IS_EMPTY', true)
+            return
+          }
 
+          commit('SET_IS_EMPTY', false);
           commit('SET_CHARACTERS', data.results);
           commit('SET_COUNT', data.count);
         })
@@ -55,22 +63,19 @@ export default new Vuex.Store({
     },
 
     setSearch({ commit, state }, searchTerm) {
-      commit('SET_LOADING', true);
-
       searchCharacter(searchTerm, state.page)
         .then((res) => {
           const data = res?.data;
-          if (!data || !data.results || !data.count) return
 
+          if (!data || !data.results || data.results.length === 0) {
+            commit('SET_IS_EMPTY', true);
+            return
+          }
+
+          commit('SET_IS_EMPTY', false);
           commit('SET_CHARACTERS', data.results);
           commit('SET_COUNT', data.count);
         })
-        .catch(() => {
-          
-        })
-        .finally(() => {
-          commit('SET_LOADING', false);
-        });
     },
     
     setPage({ commit }, page) {
