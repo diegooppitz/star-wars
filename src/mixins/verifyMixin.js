@@ -15,7 +15,7 @@ const mixin = {
     $_verifyLoaded(verify) {
       switch (verify) {
         case 'done':
-          return !this.hasError && !this.loading && !this.isEmpty;
+          return !this.hasError && !this.loading;
         case 'loading':
           return this.loading;
         case 'info':
@@ -28,7 +28,7 @@ const mixin = {
     $_verifyLoadedVuex(verify) {
       switch (verify) {
         case 'done':
-          return !this.getIsEmpty && !this.getHasError && !this.getLoading;
+          return !this.getHasError && !this.getLoading;
         case 'loading':
           return this.getLoading;
         case 'info':
@@ -38,20 +38,18 @@ const mixin = {
           return false;
       }
     },
+
     /**
-     * @description First pattern test, checks if the card has data
+     * @description Pattern test, checks if the card has data
      */
     $_verifyData(data) {
       this.isEmpty = _.isEmpty(data);
       if (this.isEmpty) {
-        this.$_componentHeight();
         this.loading = false;
       }
       return this.isEmpty;
     },
-    /**
-     * @description Second pattern test, checks if the card has data
-     */
+
     $_reqConfig() {
       this.loading = true;
       this.hasError = false;

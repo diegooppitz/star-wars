@@ -6,12 +6,16 @@
         <input v-model="searchTerm" @keypress.enter="search" @keydown="searchPressKey" type="text" class="swh__search" placeholder="Search for a character">
       </div>
 
-      <ul class="swh__list">
-        <li class="swh__list-person" v-for="(person, index) in list" :key="index" >
-          <a @click="pickPersonId(person.url)">{{ person.name }}</a>
-        </li>
-      </ul>
-      <pagination v-model="page" :records="count" :per-page="10" @paginate="paginationCallback"/>
+      <template v-if="!isEmpty">
+        <ul class="swh__list">
+          <li class="swh__list-person" v-for="(person, index) in list" :key="index" >
+            <a @click="pickPersonId(person.url)">{{ person.name }}</a>
+          </li>
+        </ul>
+        <pagination v-model="page" :records="count" :per-page="10" @paginate="paginationCallback"/>
+      </template>
+
+      <information-component v-else />
     </template>
     <loading-component v-if="$_verifyLoaded('loading')" />
   </div>
@@ -27,8 +31,9 @@ import { getCharacters, searchCharacter } from '@/services'
 // mixins
 import { verifyMixin } from '@/mixins'
 
-
+// components
 import LoadingComponent from '@/components/Loading'
+import InformationComponent from '@/components/Information';
 
 export default {
   name: 'Home',
@@ -42,20 +47,24 @@ export default {
       count: 0,
     }
   },
+
   components: {
     Pagination,
     LoadingComponent,
+    InformationComponent
   },
+
   mounted() {
     this.fetchData();
   },
+
   methods: {
     fetchData() {
       this.$_reqConfig();
 
       getCharacters(this.page)
         .then((res) => {
-          if(!res.data || !res?.data?.results) return;
+          if(!res.data || this.$_verifyData(res.data.results)) return;
 
           this.count = res?.data?.count;
           this.list = res?.data?.results;
@@ -84,6 +93,8 @@ export default {
     search() {
       if (!this.searchIsActive) this.page = 1;
 
+      if (this.searchTerm.length === 1) return;
+      
       if (!this.searchTerm || this.searchTerm.length === 0) {
         this.searchIsActive = false;
         this.fetchData();
@@ -91,13 +102,14 @@ export default {
       }
 
       this.searchIsActive = true;
+      // this.$_reqConfig();
 
       searchCharacter(this.searchTerm, this.page)
         .then((res) => {
+            if(!res.data || this.$_verifyData(res.data.results)) return;
+
             this.count = res?.data?.count;
             this.list = res?.data?.results;
-
-            if(!this.list) this.hasError = true;
         })
         .catch(() => {
           this.hasError = true;
