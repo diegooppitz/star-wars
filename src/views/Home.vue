@@ -3,16 +3,23 @@
     <template v-if="$_verifyLoaded('done')">
       <h1 class="swh__title">Star Wars characters</h1>
       <div class="swh__header">
-        <input v-model="searchTerm" @keypress.enter="search" @keydown="searchPressKey" type="text" class="swh__search" placeholder="Search for a character">
+        <input
+          v-model="searchTerm"
+          @keypress.enter="search"
+          @keydown="searchPressKey"
+          type="text"
+          class="swh__search"
+          placeholder="Search for a character"
+        />
       </div>
 
       <template v-if="!isEmpty">
         <ul class="swh__list">
-          <li class="swh__list-person" v-for="(person, index) in list" :key="index" >
+          <li class="swh__list-person" v-for="(person, index) in list" :key="index">
             <a @click="pickPersonId(person.url)">{{ person.name }}</a>
           </li>
         </ul>
-        <pagination v-model="page" :records="count" :per-page="10" @paginate="paginationCallback"/>
+        <pagination v-model="page" :records="count" :per-page="10" @paginate="paginationCallback" />
       </template>
 
       <information-component v-else />
@@ -23,35 +30,35 @@
 
 <script>
 // Libs
-import Pagination from 'vue-pagination-2';
+import Pagination from "vue-pagination-2";
 
 // services
-import { getCharacters, searchCharacter } from '@/services'
+import { getCharacters, searchCharacter } from "@/services";
 
 // mixins
-import { verifyMixin } from '@/mixins'
+import { verifyMixin } from "@/mixins";
 
 // components
-import LoadingComponent from '@/components/Loading'
-import InformationComponent from '@/components/Information';
+import LoadingComponent from "@/components/Loading";
+import InformationComponent from "@/components/Information";
 
 export default {
-  name: 'Home',
+  name: "Home",
   mixins: [verifyMixin],
   data() {
     return {
       list: [],
-      searchTerm: '',
+      searchTerm: "",
       searchIsActive: false,
       page: 1,
       count: 0,
-    }
+    };
   },
 
   components: {
     Pagination,
     LoadingComponent,
-    InformationComponent
+    InformationComponent,
   },
 
   mounted() {
@@ -63,8 +70,8 @@ export default {
       this.$_reqConfig();
 
       getCharacters(this.page)
-        .then((res) => {
-          if(!res.data || this.$_verifyData(res.data.results)) return;
+        .then(res => {
+          if (!res.data || this.$_verifyData(res.data.results)) return;
 
           this.count = res?.data?.count;
           this.list = res?.data?.results;
@@ -79,10 +86,10 @@ export default {
 
     searchPressKey() {
       setTimeout(() => {
-        if(!this.searchTerm || this.searchTerm.length === 0 ) {
+        if (!this.searchTerm || this.searchTerm.length === 0) {
           this.page = 1;
           this.fetchData();
-          return
+          return;
         }
 
         this.page = 1;
@@ -94,7 +101,7 @@ export default {
       if (!this.searchIsActive) this.page = 1;
 
       if (this.searchTerm.length === 1) return;
-      
+
       if (!this.searchTerm || this.searchTerm.length === 0) {
         this.searchIsActive = false;
         this.fetchData();
@@ -103,13 +110,12 @@ export default {
 
       this.searchIsActive = true;
 
-      searchCharacter(this.searchTerm, this.page)
-        .then((res) => {
-            if(!res.data || this.$_verifyData(res.data.results)) return;
+      searchCharacter(this.searchTerm, this.page).then(res => {
+        if (!res.data || this.$_verifyData(res.data.results)) return;
 
-            this.count = res?.data?.count;
-            this.list = res?.data?.results;
-        });
+        this.count = res?.data?.count;
+        this.list = res?.data?.results;
+      });
     },
 
     // Pick the id on url of a specific people
@@ -119,31 +125,26 @@ export default {
 
       let personId;
 
-      if(url.charAt(urlLength - 5) === '/') {
+      if (url.charAt(urlLength - 5) === "/") {
         personId = url.charAt(urlLength - 4) + url.charAt(urlLength - 3) + url.charAt(urlLength - 2);
-        this.$router.push({ name: 'character-info', params: { id: personId } });
-      }
-
-      else if (url.charAt(urlLength - 3) === '/') {
+        this.$router.push({ name: "character-info", params: { id: personId } });
+      } else if (url.charAt(urlLength - 3) === "/") {
         personId = url.charAt(urlLength - 2);
-        this.$router.push({ name: 'character-info', params: { id: personId } });
-      } 
-      
-      else {
+        this.$router.push({ name: "character-info", params: { id: personId } });
+      } else {
         personId = url.charAt(urlLength - 3) + url.charAt(urlLength - 2);
-        this.$router.push({ name: 'character-info', params: { id: personId } });
+        this.$router.push({ name: "character-info", params: { id: personId } });
       }
     },
 
     paginationCallback(page) {
       this.page = page;
-      if(this.searchIsActive) this.search();
+      if (this.searchIsActive) this.search();
       else this.fetchData();
-    }
-  }
-}
+    },
+  },
+};
 </script>
-
 
 <style lang="stylus" scoped>
 .star-wars-home
@@ -158,7 +159,7 @@ export default {
 
   @media screen and (max-width: 767px)
     height 100%
-    
+
 
   .swh
     &__title
@@ -168,7 +169,7 @@ export default {
 
 
     &__search,
-    &__button 
+    &__button
       box-sizing border-box
       height 40px
       font-size 18px
@@ -188,7 +189,7 @@ export default {
       border none
       cursor pointer
 
-      &:hover 
+      &:hover
         opacity 0.9
 
     &__list
@@ -211,7 +212,7 @@ export default {
         @media screen and (max-width: 767px)
           font-size 20px
 
-  &.loadHeight 
+  &.loadHeight
     height 100vh
     overflow hidden
 </style>
@@ -224,7 +225,7 @@ export default {
     padding 0
     margin 0
 
-    .page-item 
+    .page-item
       padding 0.5rem 0.75rem;
       cursor pointer
       color #fff
@@ -232,22 +233,22 @@ export default {
       @media screen and (max-width: 767px)
         padding 6px 10px
 
-      &:hover 
+      &:hover
         background-color #BD6A16
         font-weight 600
         z-index 3
-      
+
 
       &.active
         background-color #BD6A16
         color #fff
         font-weight 600
-      
+
 
       &:first-child,
       &:last-child
         display none
 
-      .VuePagination__count 
+      .VuePagination__count
         color #000
 </style>

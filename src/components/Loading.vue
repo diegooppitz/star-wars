@@ -1,15 +1,15 @@
 <template>
-    <span class="loading">loading...</span>
+  <span class="loading">loading...</span>
 </template>
 
 <script>
 export default {
-    name: 'Loading',
-}
+  name: "Loading",
+};
 </script>
 
 <style lang="stylus" scoped>
-.loading 
+.loading
     color #ffd700
     font-size 36px
     position absolute
